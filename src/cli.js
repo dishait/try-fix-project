@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
 const fg = require("fast-glob");
+const { defu } = require("defu");
 const { resolve, join } = require("path");
 const { ensureDir } = require("fs-extra");
-
 const { select } = require("@inquirer/prompts");
+const { consola } = require("consola");
+
 const { copyFile, lstat, readFile, writeFile } = require("fs/promises");
-const { defu } = require("defu");
+
+const log = consola.withTag("try-fix-projects");
 
 async function run() {
   const backups = "backups";
@@ -25,16 +28,18 @@ async function run() {
   });
 
   await ensureDir(backups);
-
-  const time = await getFileFormatTime(originPackageJson);
+  const time = await getFileFormatedMtime(originPackageJson);
+  const backupFile = join(
+    backups,
+    `${time}-package.json`,
+  );
 
   await copyFile(
     "package.json",
-    join(
-      backups,
-      `${time}-package.json`,
-    ),
+    backupFile,
   );
+
+  log.success(`备份 package.json 成功 -> ${backupFile}`);
 
   const originPackageJsonText = await readFile(originPackageJson, {
     encoding: "utf-8",
@@ -51,11 +56,15 @@ async function run() {
   );
 
   await writeFile(originPackageJson, JSON.stringify(finalPackageJson, null, 2));
+
+  log.success("合并 package.json 成功");
+
+  log.info("请重新执行 npm install");
 }
 
 run();
 
-async function getFileFormatTime(file) {
+async function getFileFormatedMtime(file) {
   const { mtime } = await lstat(file);
   return mtime.toLocaleString().replace(/:|\/|\\| /g, "-");
 }
