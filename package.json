@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
   "name": "try-fix-project",
-  "description": "尝试修复本地项目的依赖和版本问题",
+  "description": "尝试修复课程项目的依赖和版本问题",
   "bin": {
     "try-fix-project": "src/cli.cjs"
   },

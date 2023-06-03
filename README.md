@@ -1,6 +1,6 @@
 # try-fix-project
 
-尝试修复本地项目的依赖和版本问题
+尝试修复课程项目的依赖和版本问题
 
 <br />
 
@@ -11,6 +11,13 @@
 ```shell
 npx try-fix-project
 ```
+
+## Projects
+
+目前支持以下课程项目
+
+- [VueCli 实战商城后台管理系统](https://study.163.com/course/introduction/1209431911.htm?inLoc=ss_sslx_vueCli)
+
 
 ## License
 
