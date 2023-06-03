@@ -3,9 +3,10 @@
 const fg = require("fast-glob");
 const { defu } = require("defu");
 const { resolve, join } = require("path");
-const { ensureDir } = require("fs-extra");
+const { ensureDir, remove } = require("fs-extra");
 const { select } = require("@inquirer/prompts");
 const { consola } = require("consola");
+const { existsSync } = require("fs");
 
 const { copyFile, lstat, readFile, writeFile } = require("fs/promises");
 
@@ -14,6 +15,7 @@ const log = consola.withTag("try-fix-projects");
 async function run() {
   const backups = "backups";
   const originPackageJson = "package.json";
+  const originPackageJsonLock = "package-lock.json";
   const projectDir = resolve(__dirname, "../projects");
   const projects = await fg("*", {
     onlyDirectories: true,
@@ -28,18 +30,31 @@ async function run() {
   });
 
   await ensureDir(backups);
-  const time = await getFileFormatedMtime(originPackageJson);
+  const packageJsonMtime = await getFileFormatedMtime(originPackageJson);
   const backupFile = join(
     backups,
-    `${time}-package.json`,
+    `${packageJsonMtime}-${originPackageJson}`,
   );
 
   await copyFile(
-    "package.json",
+    originPackageJson,
     backupFile,
   );
 
-  log.success(`备份 package.json 成功 -> ${backupFile}`);
+  if (existsSync(originPackageJsonLock)) {
+    const backupLockFile = join(
+      backups,
+      `${packageJsonMtime}-${originPackageJsonLock}`,
+    );
+
+    await copyFile(originPackageJsonLock, backupLockFile);
+
+    await remove(originPackageJsonLock);
+
+    log.info(`已备份 -> ${backupLockFile}`);
+  }
+
+  log.info(`已备份 -> ${backupFile}`);
 
   const originPackageJsonText = await readFile(originPackageJson, {
     encoding: "utf-8",
@@ -57,9 +72,9 @@ async function run() {
 
   await writeFile(originPackageJson, JSON.stringify(finalPackageJson, null, 2));
 
-  log.success("合并 package.json 成功");
+  log.info(`${originPackageJson} 合并成功`);
 
-  log.info("请重新执行 npm install");
+  log.success("fix 成功, 请重新执行 npm install");
 }
 
 run();
