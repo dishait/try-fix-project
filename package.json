@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.1",
   "name": "try-fix-project",
   "description": "尝试修复本地项目的依赖和版本问题",
   "main": "./dist/index.cjs",
