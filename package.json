@@ -24,10 +24,12 @@
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [
-    "lib",
-    "tool",
-    "node",
-    "utils"
+    "nodejs",
+    "vue",
+    "vue-cli",
+    "version",
+    "fix",
+    "break change"
   ],
   "author": {
     "name": "markthree",
