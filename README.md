@@ -4,6 +4,14 @@
 
 <br />
 
+## Cli
+
+在你的项目根目录下
+
+```shell
+npx try-fix-project
+```
+
 ## License
 
 Made with [dishait](https://github.com/dishait)
