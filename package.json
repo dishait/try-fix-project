@@ -5,6 +5,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "try-fix-project": "dist/cli.cjs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dishait/try-fix-project.git"
@@ -17,10 +20,12 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "template"
   ],
   "scripts": {
     "build": "unbuild",
+    "prepublishOnly": "pnpm build",
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [
