@@ -1,6 +1,15 @@
 const { join } = require("path");
 const { defu } = require("defu");
-const { emptyDir, ensureDir, exists, copyFile, readFile, writeFile, remove } = require(
+const {
+  emptyDir,
+  ensureDir,
+  exists,
+  lstat,
+  copyFile,
+  readFile,
+  writeFile,
+  remove,
+} = require(
   "fs-extra",
 );
 
