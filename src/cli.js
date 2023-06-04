@@ -4,10 +4,17 @@ const fg = require("fast-glob");
 const { join, resolve } = require("path");
 const { log } = require("./log");
 const { nodeIsLts } = require("./check");
-const { select } = require('@inquirer/prompts')
+const { select } = require("@inquirer/prompts");
 const { execSync } = require("child_process");
-const { mayBeCleanDir, mayBeBackupFiles, defuPackageJson, ensureRemove } =
-  require("./fs");
+const {
+  mayBeCleanDir,
+  readTextFile,
+  mayBeBackupFiles,
+  defuPackageJson,
+  ensureRemove,
+} = require("./fs");
+const { copyFile } = require("fs-extra");
+const { writeFile } = require("fs/promises");
 
 async function run() {
   const originPackageFile = "package.json";
@@ -52,10 +59,26 @@ async function run() {
   log.info("尝试重新执行 npm install");
 
   execSync("npm install", {
-    stdio: 'inherit'
+    stdio: "inherit",
   });
 
   log.success("fix 成功");
+
+  if (answer === "VueCli 实战商城后台管理系统") {
+    const bootstrapCss = "bootstrap.min.css";
+    const indexHtmlFile = `public/index.html`;
+    await copyFile(
+      join(projectDir, answer, bootstrapCss),
+      `public/${bootstrapCss}`,
+    );
+    const indexHtmlText = await readTextFile(indexHtmlFile);
+
+    await writeFile(
+      indexHtmlFile,
+      indexHtmlText.replace(/https.*bootstrap.min.css/, `/${bootstrapCss}`),
+    );
+    log.info("bootstrap 已本地化")
+  }
 }
 
 run();
