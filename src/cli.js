@@ -4,6 +4,7 @@ const fg = require("fast-glob");
 const { join, resolve } = require("path");
 const { log } = require("./log");
 const { nodeIsLts } = require("./check");
+const { select } = require('@inquirer/prompts')
 const { execSync } = require("child_process");
 const { mayBeCleanDir, mayBeBackupFiles, defuPackageJson, ensureRemove } =
   require("./fs");
