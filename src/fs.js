@@ -59,9 +59,7 @@ async function writeJson(target, json) {
 }
 
 async function ensureRemove(file) {
-  if (!(await exists(file))) {
-    await remove(file);
-  }
+  await remove(file).catch(() => {});
 }
 
 module.exports = {
