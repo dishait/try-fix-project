@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 const fg = require("fast-glob");
-const { join } = require("path");
+const { join, resolve } = require("path");
 const { log } = require("./log");
 const { nodeIsLts } = require("./check");
-const { execSync } = require('child_process')
+const { execSync } = require("child_process");
 const { mayBeCleanDir, mayBeBackupFiles, defuPackageJson, ensureRemove } =
   require("./fs");
-
 
 async function run() {
   const originPackageFile = "package.json";
@@ -34,7 +33,7 @@ async function run() {
 
   await ensureRemove(originPackageLockFile);
 
-  log.info('已确保移除 package-lock.json')
+  log.info("已确保移除 package-lock.json");
 
   const targetPackageFile = join(
     projectDir,
@@ -49,11 +48,11 @@ async function run() {
 
   log.info("合并 package.json");
 
-  log.info("fix 成功，尝试重新执行 npm install")
+  log.info("fix 成功，尝试重新执行 npm install");
 
-  execSync('npm install')
+  execSync("npm install");
 
-  log.success('fix 已成功')
+  log.success("fix 已成功");
 }
 
 run();
