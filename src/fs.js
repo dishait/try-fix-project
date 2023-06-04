@@ -1,6 +1,6 @@
 const { join } = require("path");
 const { defu } = require("defu");
-const { emptyDir, exists, copyFile, readFile, writeFile, remove } = require(
+const { emptyDir, ensureDir, exists, copyFile, readFile, writeFile, remove } = require(
   "fs-extra",
 );
 
@@ -16,8 +16,7 @@ async function mayBeBackupFile(file, outout = "backups") {
     return;
   }
   const mtime = await getFileFormatedMtime(file);
-  const bundle = join(outout, `${mtime}-${file}`);
-  await copyFile(file, bundle);
+  await copyFile(file, join(outout, `${mtime}-${file}`));
 }
 
 async function mayBeBackupFiles(files, outout = "backups") {
