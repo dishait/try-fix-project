@@ -1,27 +1,22 @@
 #!/usr/bin/env node
 
 const fg = require("fast-glob");
-const { defu } = require("defu");
-const { resolve, join } = require("path");
-const { ensureDir, remove } = require("fs-extra");
-const { select } = require("@inquirer/prompts");
-const { consola } = require("consola");
-const { existsSync } = require("fs");
+const { join } = require("path");
+const { log } = require("./log");
+const { nodeIsLts } = require("./check");
+const { execSync } = require('child_process')
+const { mayBeCleanDir, mayBeBackupFiles, defuPackageJson, ensureRemove } =
+  require("./fs");
 
-const { copyFile, lstat, readFile, writeFile } = require("fs/promises");
-
-const log = consola.withTag("try-fix-projects");
 
 async function run() {
-  const backups = "backups";
-  const originPackageJson = "package.json";
-  const originPackageJsonLock = "package-lock.json";
+  const originPackageFile = "package.json";
+  const originPackageLockFile = "package-lock.json";
   const projectDir = resolve(__dirname, "../projects");
   const projects = await fg("*", {
     onlyDirectories: true,
     cwd: projectDir,
   });
-
   const choices = projects.map((p) => ({ name: p, value: p }));
 
   const answer = await select({
@@ -29,62 +24,36 @@ async function run() {
     choices,
   });
 
-  await ensureDir(backups);
-  const packageJsonMtime = await getFileFormatedMtime(originPackageJson);
-  const backupFile = join(
-    backups,
-    `${packageJsonMtime}-${originPackageJson}`,
+  await mayBeCleanDir("node_modules");
+
+  log.info("清理 node_modules");
+
+  await mayBeBackupFiles([originPackageFile, originPackageLockFile]);
+
+  log.info("备份 package.json 和 package-lock.json");
+
+  await ensureRemove(originPackageLockFile);
+
+  log.info('已确保移除 package-lock.json')
+
+  const targetPackageFile = join(
+    projectDir,
+    answer,
+    nodeIsLts() ? "package.json" : "old-package.json",
   );
 
-  await copyFile(
-    originPackageJson,
-    backupFile,
+  await defuPackageJson(
+    targetPackageFile,
+    originPackageFile,
   );
 
-  if (existsSync(originPackageJsonLock)) {
-    const backupLockFile = join(
-      backups,
-      `${packageJsonMtime}-${originPackageJsonLock}`,
-    );
+  log.info("合并 package.json");
 
-    await copyFile(originPackageJsonLock, backupLockFile);
+  log.info("fix 成功，尝试重新执行 npm install")
 
-    await remove(originPackageJsonLock);
+  execSync('npm install')
 
-    log.info(`已备份 -> ${backupLockFile}`);
-  }
-
-  log.info(`已备份 -> ${backupFile}`);
-
-  const originPackageJsonText = await readFile(originPackageJson, {
-    encoding: "utf-8",
-  });
-
-  const targetPackageJsonText = await readFile(
-    join(projectDir, answer, nodeIsLts() ? "package.json" : "old-package.json"),
-    { encoding: "utf-8" },
-  );
-
-  const finalPackageJson = defu(
-    JSON.parse(targetPackageJsonText),
-    JSON.parse(originPackageJsonText),
-  );
-
-  await writeFile(originPackageJson, JSON.stringify(finalPackageJson, null, 2));
-
-  log.info(`${originPackageJson} 合并成功`);
-
-  log.success("fix 成功, 请重新执行 npm install");
+  log.success('fix 已成功')
 }
 
 run();
-
-async function getFileFormatedMtime(file) {
-  const { mtime } = await lstat(file);
-  return mtime.toLocaleString().replace(/:|\/|\\| /g, "-");
-}
-
-function nodeIsLts() {
-  const [major] = process.version.slice(1).split(".");
-  return Number(major) >= 18;
-}
