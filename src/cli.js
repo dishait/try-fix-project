@@ -62,7 +62,7 @@ async function run() {
   if (answer === "vue-element在线教育后台系统") {
     log.info("重写 git url 配置");
     execSync(
-      `git config --global url."https://github".insteadOf git://github"`,
+      `git config --global url."https://github.com/".insteadOf git://github.com/`,
       {
         stdio: "inherit",
       },
