@@ -77,7 +77,7 @@ async function run() {
       indexHtmlFile,
       indexHtmlText.replace(/https.*bootstrap.min.css/, `/${bootstrapCss}`),
     );
-    log.info("bootstrap 已本地化")
+    log.info("bootstrap 已本地化");
   }
 }
 

@@ -9,9 +9,7 @@ const {
   readFile,
   writeFile,
   remove,
-} = require(
-  "fs-extra",
-);
+} = require("fs-extra");
 
 async function mayBeCleanDir(dir) {
   if (await exists(dir)) {
