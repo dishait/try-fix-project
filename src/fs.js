@@ -14,11 +14,11 @@ const {
 const defu = createDefu((defaultObject, key, value) => {
   if (Array.isArray(value)) {
     // 保持数组类型是唯一的
-    defaultObject[key] = [...new Set([defaultObject[key], value].flat())]
-    return true
+    defaultObject[key] = [...new Set([defaultObject[key], value].flat())];
+    return true;
   }
-  return false
-})
+  return false;
+});
 
 async function mayBeCleanDir(dir) {
   if (await exists(dir)) {
@@ -41,7 +41,7 @@ async function mayBeBackupFiles(files, outout = "backups") {
 
 async function getFileFormatedMtime(file) {
   const { mtime } = await lstat(file);
-  return `${mtime.getFullYear()}-${mtime.getMonth()}-${mtime.getDay()}-${mtime.getHours()}-${mtime.getMinutes()}-${mtime.getSeconds()}-${mtime.getMilliseconds()}`
+  return `${mtime.getFullYear()}-${mtime.getMonth()}-${mtime.getDay()}-${mtime.getHours()}-${mtime.getMinutes()}-${mtime.getSeconds()}-${mtime.getMilliseconds()}`;
 }
 
 async function defuPackageJson(target, origin) {

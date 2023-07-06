@@ -58,26 +58,20 @@ async function run() {
 
   log.info("尝试重新执行 npm install");
 
-  try {
-    execSync("npm install", {
-      stdio: "inherit",
-    });
-  } catch (error) {
-    // https://github.com/PanJiaChen/vue-element-admin/issues/4078
-    if (error.message.includes("git@github.com: Permission denied (publickey).")) {
-      log.warn("git url 配置错误")
-      execSync(`git config --global url."https://github".insteadOf git://github"`)
-      log.info("重写 git url 配置");
-      log.info("尝试重新 npm install")
-      execSync("npm install", {
+  // https://github.com/PanJiaChen/vue-element-admin/issues/4078
+  if (answer === "vue-element在线教育后台系统") {
+    log.info("重写 git url 配置");
+    execSync(
+      `git config --global url."https://github".insteadOf git://github"`,
+      {
         stdio: "inherit",
-      });
-    }
-
-    throw error
+      },
+    );
   }
 
- 
+  execSync("npm install", {
+    stdio: "inherit",
+  });
 
   log.success("fix 成功");
 
