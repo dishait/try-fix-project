@@ -41,7 +41,7 @@ async function mayBeBackupFiles(files, outout = "backups") {
 
 async function getFileFormatedMtime(file) {
   const { mtime } = await lstat(file);
-  return mtime.toLocaleString().replace(/:|\/|\\| /g, "-");
+  return `${mtime.getFullYear()}-${mtime.getMonth()}-${mtime.getDay()}-${mtime.getHours()}-${mtime.getMinutes()}-${mtime.getSeconds()}-${mtime.getMilliseconds()}`
 }
 
 async function defuPackageJson(target, origin) {
