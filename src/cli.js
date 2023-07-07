@@ -83,7 +83,7 @@ async function run() {
 
     await writeFile(
       indexHtmlFile,
-      indexHtmlText.replace(/https.*bootstrap.min.css/, `/${bootstrapCss}`),
+      indexHtmlText.replace(/https.*bootstrap.min.css[\w\W]*?>/, `/${bootstrapCss}">`),
     );
     log.info("bootstrap 已本地化");
   }
