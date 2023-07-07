@@ -12,6 +12,7 @@ const {
   mayBeBackupFiles,
   defuPackageJson,
   ensureRemove,
+  mayBeCreateNpmrcTaobao,
 } = require("./fs");
 const { copyFile } = require("fs-extra");
 const { writeFile } = require("fs/promises");
@@ -56,7 +57,28 @@ async function run() {
 
   log.info("合并 package.json");
 
+  await mayBeCreateNpmrcTaobao()
+
+  log.info("创建 .npmrc 并设置淘宝镜像")
+
   log.info("尝试重新执行 npm install");
+
+  
+  if (answer === "VueCli 实战商城后台管理系统") {
+    const bootstrapCss = "bootstrap.min.css";
+    const indexHtmlFile = `public/index.html`;
+    await copyFile(
+      join(projectDir, answer, bootstrapCss),
+      `public/${bootstrapCss}`,
+    );
+    const indexHtmlText = await readTextFile(indexHtmlFile);
+
+    await writeFile(
+      indexHtmlFile,
+      indexHtmlText.replace(/https.*bootstrap.min.css[\w\W]*?>/, `/${bootstrapCss}">`),
+    );
+    log.success("bootstrap 已本地化");
+  }
 
   // https://github.com/PanJiaChen/vue-element-admin/issues/4078
   if (answer === "vue-element在线教育后台系统") {
@@ -71,22 +93,6 @@ async function run() {
   });
 
   log.success("fix 成功");
-
-  if (answer === "VueCli 实战商城后台管理系统") {
-    const bootstrapCss = "bootstrap.min.css";
-    const indexHtmlFile = `public/index.html`;
-    await copyFile(
-      join(projectDir, answer, bootstrapCss),
-      `public/${bootstrapCss}`,
-    );
-    const indexHtmlText = await readTextFile(indexHtmlFile);
-
-    await writeFile(
-      indexHtmlFile,
-      indexHtmlText.replace(/https.*bootstrap.min.css[\w\W]*?>/, `/${bootstrapCss}">`),
-    );
-    log.info("bootstrap 已本地化");
-  }
 }
 
 run();

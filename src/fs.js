@@ -69,6 +69,14 @@ async function ensureRemove(file) {
   await remove(file).catch(() => {});
 }
 
+async function mayBeCreateNpmrcTaobao() {
+  if (!(await exists('.npmrc'))) {
+    await writeFile('.npmrc', "registry=https://registry.npmmirror.com/", {
+      encoding: 'utf-8'
+    })
+  }
+}
+
 module.exports = {
   readJson,
   writeJson,
@@ -79,4 +87,5 @@ module.exports = {
   mayBeBackupFile,
   mayBeBackupFiles,
   getFileFormatedMtime,
+  mayBeCreateNpmrcTaobao,
 };
