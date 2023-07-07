@@ -77,7 +77,7 @@ async function run() {
 
     await writeFile("nuxt.config.ts", newNuxtConfigText);
 
-    log.info("已重写 nuxt.config.ts 配置文件")
+    log.info("已重写 nuxt.config.ts 配置文件");
   }
 
   await mayBeCleanDir("node_modules");
