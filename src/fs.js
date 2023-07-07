@@ -1,5 +1,5 @@
 const { join } = require("path");
-const { createDefu } = require("defu");
+const { defu } = require("./normalize");
 const {
   emptyDir,
   ensureDir,
@@ -10,15 +10,6 @@ const {
   writeFile,
   remove,
 } = require("fs-extra");
-
-const defu = createDefu((defaultObject, key, value) => {
-  if (Array.isArray(value)) {
-    // 保持数组类型是唯一的
-    defaultObject[key] = [...new Set([defaultObject[key], value].flat())];
-    return true;
-  }
-  return false;
-});
 
 async function mayBeCleanDir(dir) {
   if (await exists(dir)) {
