@@ -66,6 +66,20 @@ async function run() {
     );
   }
 
+  if (answer === "Nuxt3+Vue3实战在线教育网站") {
+    await mayBeCleanDir(".nuxt");
+    log.info("已确保清理 .nuxt 缓存");
+
+    const nuxtConfigText = await readTextFile("nuxt.config.ts");
+
+    const newNuxtConfigText = nuxtConfigText.replace("autoImports", "imports")
+      .replace("buildModules", "modules").replace(/import.*nuxt['"]/, "");
+
+    await writeFile("nuxt.config.ts", newNuxtConfigText);
+
+    log.info("已重写 nuxt.config.ts 配置文件")
+  }
+
   await mayBeCleanDir("node_modules");
 
   log.info("清理 node_modules");
