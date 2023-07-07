@@ -16,8 +16,11 @@ const {
 } = require("./fs");
 const { copyFile } = require("fs-extra");
 const { writeFile } = require("fs/promises");
+const { version } = require("process");
 
 async function run() {
+  log.success("当前 node 版本为", version);
+
   const originPackageFile = "package.json";
   const originPackageLockFile = "package-lock.json";
   const projectDir = resolve(__dirname, "../projects");
@@ -88,11 +91,11 @@ async function run() {
 
   log.info("合并 package.json");
 
-  log.info("尝试重新执行 npm install");
+  // log.info("尝试重新执行 npm install");
 
-  execSync("npm install", {
-    stdio: "inherit",
-  });
+  // execSync("npm install", {
+  //   stdio: "inherit",
+  // });
 
   log.success("fix 成功");
 }
