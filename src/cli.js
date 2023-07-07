@@ -32,6 +32,37 @@ async function run() {
     choices,
   });
 
+  await mayBeCreateNpmrcTaobao();
+
+  log.info("创建 .npmrc 并设置淘宝镜像");
+
+  if (answer === "VueCli 实战商城后台管理系统") {
+    const bootstrapCss = "bootstrap.min.css";
+    const indexHtmlFile = `public/index.html`;
+    await copyFile(
+      join(projectDir, answer, bootstrapCss),
+      `public/${bootstrapCss}`,
+    );
+    const indexHtmlText = await readTextFile(indexHtmlFile);
+
+    await writeFile(
+      indexHtmlFile,
+      indexHtmlText.replace(
+        /https.*bootstrap.min.css[\w\W]*?>/,
+        `/${bootstrapCss}">`,
+      ),
+    );
+    log.success("bootstrap 已本地化");
+  }
+
+  // https://github.com/PanJiaChen/vue-element-admin/issues/4078
+  if (answer === "vue-element在线教育后台系统") {
+    log.info("重写 git url 配置");
+    execSync(
+      `git config --global url."https://".insteadOf ssh://git@`,
+    );
+  }
+
   await mayBeCleanDir("node_modules");
 
   log.info("清理 node_modules");
@@ -57,36 +88,7 @@ async function run() {
 
   log.info("合并 package.json");
 
-  await mayBeCreateNpmrcTaobao()
-
-  log.info("创建 .npmrc 并设置淘宝镜像")
-
   log.info("尝试重新执行 npm install");
-
-  
-  if (answer === "VueCli 实战商城后台管理系统") {
-    const bootstrapCss = "bootstrap.min.css";
-    const indexHtmlFile = `public/index.html`;
-    await copyFile(
-      join(projectDir, answer, bootstrapCss),
-      `public/${bootstrapCss}`,
-    );
-    const indexHtmlText = await readTextFile(indexHtmlFile);
-
-    await writeFile(
-      indexHtmlFile,
-      indexHtmlText.replace(/https.*bootstrap.min.css[\w\W]*?>/, `/${bootstrapCss}">`),
-    );
-    log.success("bootstrap 已本地化");
-  }
-
-  // https://github.com/PanJiaChen/vue-element-admin/issues/4078
-  if (answer === "vue-element在线教育后台系统") {
-    log.info("重写 git url 配置");
-    execSync(
-      `git config --global url."https://".insteadOf ssh://git@`,
-    );
-  }
 
   execSync("npm install", {
     stdio: "inherit",

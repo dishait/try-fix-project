@@ -70,10 +70,10 @@ async function ensureRemove(file) {
 }
 
 async function mayBeCreateNpmrcTaobao() {
-  if (!(await exists('.npmrc'))) {
-    await writeFile('.npmrc', "registry=https://registry.npmmirror.com/", {
-      encoding: 'utf-8'
-    })
+  if (!(await exists(".npmrc"))) {
+    await writeFile(".npmrc", "registry=https://registry.npmmirror.com/", {
+      encoding: "utf-8",
+    });
   }
 }
 
