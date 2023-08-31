@@ -68,6 +68,18 @@ async function mayBeCreateNpmrcTaobao() {
   }
 }
 
+async function detectInstallCommand() {
+  if (await exists("pnpm-lock.yaml")) {
+    return "pnpm install";
+  }
+
+  if (await exists("yarn.lock")) {
+    return "yarn";
+  }
+
+  return "npm install";
+}
+
 module.exports = {
   readJson,
   writeJson,
@@ -78,5 +90,6 @@ module.exports = {
   mayBeBackupFile,
   mayBeBackupFiles,
   getFileFormatedMtime,
+  detectInstallCommand,
   mayBeCreateNpmrcTaobao,
 };

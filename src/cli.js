@@ -13,6 +13,7 @@ const {
   defuPackageJson,
   ensureRemove,
   mayBeCreateNpmrcTaobao,
+  detectInstallCommand,
 } = require("./fs");
 const { copyFile } = require("fs-extra");
 const { writeFile } = require("fs/promises");
@@ -22,7 +23,8 @@ async function run() {
   log.success("当前 node 版本为", version);
 
   const originPackageFile = "package.json";
-  const originPackageLockFile = "package-lock.json";
+  const originLockFiles = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
+
   const projectDir = resolve(__dirname, "../projects");
   const projects = await fg("*", {
     onlyDirectories: true,
@@ -84,13 +86,16 @@ async function run() {
 
   log.info("清理 node_modules");
 
-  await mayBeBackupFiles([originPackageFile, originPackageLockFile]);
+  await mayBeBackupFiles([
+    originPackageFile,
+    ...originLockFiles,
+  ]);
 
-  log.info("备份 package.json 和 package-lock.json");
+  log.info("备份 package.json 和 lock 文件");
 
-  await ensureRemove(originPackageLockFile);
+  await Promise.all(originLockFiles.map((f) => ensureRemove(f)));
 
-  log.info("已确保移除 package-lock.json");
+  log.info("已确保移除 lock 文件");
 
   const targetPackageFile = join(
     projectDir,
@@ -105,9 +110,11 @@ async function run() {
 
   log.info("合并 package.json");
 
-  log.info("尝试重新执行 npm install");
+  const install = await detectInstallCommand();
 
-  execSync("npm install", {
+  log.info(`尝试重新执行 ${install}`);
+
+  execSync(install, {
     stdio: "inherit",
   });
 
