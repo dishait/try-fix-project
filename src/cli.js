@@ -46,7 +46,7 @@ async function run() {
     const indexHtmlFile = `public/index.html`;
 
     const src = join(projectDir, answer, bootstrapCss);
-    if (await exists(src)) {
+    if ((await exists(src)) && (await exists(indexHtmlFile))) {
       const output = `public/${bootstrapCss}`;
       await ensureFile(output);
       await copyFile(src, output);
