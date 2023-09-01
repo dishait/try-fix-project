@@ -70,7 +70,7 @@ async function writeNpmrc(
   } else {
     const rcText = await readFile(rcFile, { encoding: "utf-8" });
     if (!rcText.includes(record)) {
-      await appendFile(rcFile, record);
+      await appendFile(rcFile, "\n" + record);
     }
   }
 }
