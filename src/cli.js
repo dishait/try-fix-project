@@ -5,7 +5,6 @@ const { join, resolve } = require("path");
 const { log } = require("./log");
 const { nodeIsLts } = require("./check");
 const { select } = require("@inquirer/prompts");
-const { execSync } = require("child_process");
 const {
   writeNpmrc,
   mayBeCleanDir,
@@ -15,7 +14,7 @@ const {
   ensureRemove,
   detectInstallCommand,
 } = require("./fs");
-const { copyFile } = require("fs-extra");
+const { copyFile, exists, ensureFile } = require("fs-extra");
 const { writeFile } = require("fs/promises");
 const { version } = require("process");
 
@@ -44,25 +43,25 @@ async function run() {
   if (answer === "VueCli 实战商城后台管理系统") {
     const bootstrapCss = "bootstrap.min.css";
     const indexHtmlFile = `public/index.html`;
-    await copyFile(
-      join(projectDir, answer, bootstrapCss),
-      `public/${bootstrapCss}`,
-    );
-    const indexHtmlText = await readTextFile(indexHtmlFile);
 
-    await writeFile(
-      indexHtmlFile,
-      indexHtmlText.replace(
-        /https.*bootstrap.min.css[\w\W]*?>/,
-        `/${bootstrapCss}">`,
-      ),
-    );
-    log.success("bootstrap 已本地化");
-
+    const src = join(projectDir, answer, bootstrapCss);
+    if (await exists(src)) {
+      const output = `public/${bootstrapCss}`;
+      await ensureFile(output);
+      await copyFile(src, output);
+      const indexHtmlText = await readTextFile(indexHtmlFile);
+      await writeFile(
+        indexHtmlFile,
+        indexHtmlText.replace(
+          /https.*bootstrap.min.css[\w\W]*?>/,
+          `/${bootstrapCss}">`,
+        ),
+      );
+      log.success("bootstrap 已本地化");
+    }
     await writeNpmrc(
       "sass_binary_site=https://npm.taobao.org/mirrors/node-sass/",
     );
-
     log.success("重定向 node-sass 远程地址为淘宝镜像源");
   }
 
