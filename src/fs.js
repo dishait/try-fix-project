@@ -9,6 +9,7 @@ const {
   readFile,
   writeFile,
   remove,
+  appendFile,
 } = require("fs-extra");
 
 async function mayBeCleanDir(dir) {
@@ -60,11 +61,17 @@ async function ensureRemove(file) {
   await remove(file).catch(() => {});
 }
 
-async function mayBeCreateNpmrcTaobao() {
-  if (!(await exists(".npmrc"))) {
-    await writeFile(".npmrc", "registry=https://registry.npmmirror.com/", {
-      encoding: "utf-8",
-    });
+async function writeNpmrc(
+  record = "registry=https://registry.npmmirror.com/",
+) {
+  const rcFile = ".npmrc";
+  if (!(await exists(rcFile))) {
+    await writeFile(rcFile, record, { encoding: "utf-8" });
+  } else {
+    const rcText = await readFile(rcFile, { encoding: "utf-8" });
+    if (!rcText.includes(record)) {
+      await appendFile(rcFile, record);
+    }
   }
 }
 
@@ -83,6 +90,7 @@ async function detectInstallCommand() {
 module.exports = {
   readJson,
   writeJson,
+  writeNpmrc,
   ensureRemove,
   readTextFile,
   mayBeCleanDir,
@@ -91,5 +99,4 @@ module.exports = {
   mayBeBackupFiles,
   getFileFormatedMtime,
   detectInstallCommand,
-  mayBeCreateNpmrcTaobao,
 };

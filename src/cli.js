@@ -7,12 +7,12 @@ const { nodeIsLts } = require("./check");
 const { select } = require("@inquirer/prompts");
 const { execSync } = require("child_process");
 const {
+  writeNpmrc,
   mayBeCleanDir,
   readTextFile,
   mayBeBackupFiles,
   defuPackageJson,
   ensureRemove,
-  mayBeCreateNpmrcTaobao,
   detectInstallCommand,
 } = require("./fs");
 const { copyFile } = require("fs-extra");
@@ -37,7 +37,7 @@ async function run() {
     choices,
   });
 
-  await mayBeCreateNpmrcTaobao();
+  await writeNpmrc("registry=https://registry.npmmirror.com/");
 
   log.info("创建 .npmrc 并设置淘宝镜像");
 
@@ -58,6 +58,12 @@ async function run() {
       ),
     );
     log.success("bootstrap 已本地化");
+
+    await writeNpmrc(
+      "sass_binary_site=https://npm.taobao.org/mirrors/node-sass/",
+    );
+
+    log.success("重定向 node-sass 远程地址为淘宝镜像源");
   }
 
   // https://github.com/PanJiaChen/vue-element-admin/issues/4078
