@@ -5,6 +5,7 @@ const { join, resolve } = require("path");
 const { log } = require("./log");
 const { nodeIsLts } = require("./check");
 const { select } = require("@inquirer/prompts");
+const { execSync } = require("child_process");
 const {
   writeNpmrc,
   mayBeCleanDir,
