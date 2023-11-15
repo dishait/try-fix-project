@@ -12,7 +12,7 @@ const {
   readTextFile,
   mayBeBackupFiles,
   defuPackageJson,
-  ensureRemove,
+  ensureEmpty,
   detectInstallCommand,
 } = require("./fs");
 const { copyFile, exists, ensureFile } = require("fs-extra");
@@ -99,9 +99,9 @@ async function run() {
 
   log.info("备份 package.json 和 lock 文件");
 
-  await Promise.all(originLockFiles.map((f) => ensureRemove(f)));
+  await Promise.all(originLockFiles.map((f) => ensureEmpty(f)));
 
-  log.info("已确保移除 lock 文件");
+  log.info("已确保清空 lock 文件");
 
   const targetPackageFile = join(
     projectDir,

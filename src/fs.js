@@ -61,6 +61,10 @@ async function ensureRemove(file) {
   await remove(file).catch(() => {});
 }
 
+async function ensureEmpty(file) {
+  await writeFile(file, "").catch(() => {});
+}
+
 async function writeNpmrc(
   record = "registry=https://registry.npmmirror.com/",
 ) {
@@ -91,6 +95,7 @@ module.exports = {
   readJson,
   writeJson,
   writeNpmrc,
+  ensureEmpty,
   ensureRemove,
   readTextFile,
   mayBeCleanDir,
