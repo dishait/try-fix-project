@@ -1,5 +1,5 @@
 {
-  "version": "0.5.5",
+  "version": "0.5.6",
   "name": "try-fix-project",
   "description": "尝试修复课程项目的依赖和版本问题",
   "bin": {
