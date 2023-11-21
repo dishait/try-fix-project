@@ -62,7 +62,9 @@ async function ensureRemove(file) {
 }
 
 async function ensureEmpty(file) {
-  await writeFile(file, "").catch(() => {});
+  if (await exists(file)) {
+    await writeFile(file, "").catch(() => {});
+  }
 }
 
 async function writeNpmrc(
