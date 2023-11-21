@@ -69,9 +69,14 @@ async function run() {
   // https://github.com/PanJiaChen/vue-element-admin/issues/4078
   if (answer === "vue-element在线教育后台系统") {
     log.info("重写 git url 配置");
-    execSync(
-      `git config --global url."https://".insteadOf ssh://git@`,
-    );
+    try {
+      execSync(
+        `git config --global url."https://".insteadOf ssh://git@`,
+      );
+    } catch (error) {
+      log.error(error);
+      log.warn(`重写 git url 配置失败，依赖安装可能将失败`);
+    }
   }
 
   if (answer === "Nuxt3+Vue3实战在线教育网站") {
