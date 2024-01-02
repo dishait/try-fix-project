@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 const fg = require("fast-glob");
-const { join, resolve } = require("path");
 const { log } = require("./log");
-const { nodeIsLts } = require("./check");
+const { join, resolve } = require("path");
+const { isModernNode } = require("./check");
 const { select } = require("@inquirer/prompts");
 const { execSync } = require("child_process");
 const {
@@ -20,6 +20,7 @@ const { writeFile } = require("fs/promises");
 const { version } = require("process");
 
 async function run() {
+  const isWindows = version().includes("Windows");
   log.success("当前 node 版本为", version);
 
   const originPackageFile = "package.json";
@@ -77,6 +78,16 @@ async function run() {
       log.error(error);
       log.warn(`重写 git url 配置失败，依赖安装可能将失败`);
     }
+    // 检查环境变量中是否不包含系统路径 (C:\\WINDOWS\\System32，如果是则关闭配置中的 open
+    if (isWindows && process.env.Path.includes("C:\\WINDOWS\\System32")) {
+      const configFile = "vue.config.js";
+      const configText = await readTextFile(configFile);
+      await writeFile(
+        configFile,
+        configText.replace("open: true", "open: false"),
+      );
+      log.withTag("windows").warn("未发现系统路径, 关闭浏览器自动打开");
+    }
   }
 
   if (answer === "Nuxt3+Vue3实战在线教育网站") {
@@ -90,6 +101,7 @@ async function run() {
 
     await writeFile("nuxt.config.ts", newNuxtConfigText);
 
+    // TODO 判断 nuxt 版本，修复 naive ui 样式问题
     log.info("已重写 nuxt.config.ts 配置文件");
   }
 
@@ -111,7 +123,7 @@ async function run() {
   const targetPackageFile = join(
     projectDir,
     answer,
-    nodeIsLts() ? "package.json" : "old-package.json",
+    isModernNode() ? "package.json" : "old-package.json",
   );
 
   await defuPackageJson(

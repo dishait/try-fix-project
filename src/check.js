@@ -2,11 +2,11 @@ const { version } = require("process");
 
 const [major] = version.slice(1).split(".");
 
-function nodeIsLts() {
+function isModernNode() {
   return Number(major) >= 18;
 }
 
 module.exports = {
-  nodeIsLts,
+  isModernNode,
   nodeMajorVersion: Number(major),
 };
