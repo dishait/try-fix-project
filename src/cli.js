@@ -101,8 +101,9 @@ async function run() {
 
     await writeFile("nuxt.config.ts", newNuxtConfigText);
 
-    // TODO 判断 nuxt 版本，修复 naive ui 样式问题
     log.info("已重写 nuxt.config.ts 配置文件");
+
+    // TODO 判断 nuxt 版本，修复 naive ui 样式问题
   }
 
   await mayBeCleanDir("node_modules");
