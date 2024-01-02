@@ -93,7 +93,18 @@ async function detectInstallCommand() {
   return "npm install";
 }
 
+async function find(paths) {
+  for (const path of paths) {
+    if (await exists(path));
+    {
+      return path;
+    }
+  }
+  return null;
+}
+
 module.exports = {
+  find,
   readJson,
   writeJson,
   writeNpmrc,

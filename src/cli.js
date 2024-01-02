@@ -14,10 +14,12 @@ const {
   defuPackageJson,
   ensureEmpty,
   detectInstallCommand,
+  find,
 } = require("./fs");
 const { copyFile, exists, ensureFile } = require("fs-extra");
 const { writeFile } = require("fs/promises");
 const { version } = require("process");
+const { getPackageInfo } = require("local-pkg");
 
 async function run() {
   const isWindows = version().includes("Windows");
@@ -103,7 +105,30 @@ async function run() {
 
     log.info("已重写 nuxt.config.ts 配置文件");
 
-    // TODO 判断 nuxt 版本，修复 naive ui 样式问题
+    // 判断 nuxt 版本，修复 naive ui 样式问题
+    let futurePluginText = "";
+    const packageInfo = await getPackageInfo("nuxt");
+
+    if (packageInfo.version.includes("3.0.0")) {
+      futurePluginText = await readTextFile(
+        join(projectDir, "plugins/old-naive-ui.js"),
+      );
+    } else {
+      futurePluginText = await readTextFile(
+        join(projectDir, "plugins/naive-ui.js"),
+      );
+    }
+    const pluginFile = await find([
+      "plugins/naive-ui.js",
+      "plugins/naive-ui.ts",
+    ]);
+
+    if (pluginFile) {
+      await writeFile(pluginFile, futurePluginText);
+    } else {
+      await writeFile("plugins/naive-ui.js", futurePluginText);
+    }
+    return;
   }
 
   await mayBeCleanDir("node_modules");
