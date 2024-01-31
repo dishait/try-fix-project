@@ -22,7 +22,7 @@ const { version } = require("process");
 const { getPackageInfo } = require("local-pkg");
 
 async function run() {
-  const isWindows = version().includes("Windows");
+  const isWindows = version.includes("Windows");
   log.success("当前 node 版本为", version);
 
   const originPackageFile = "package.json";
