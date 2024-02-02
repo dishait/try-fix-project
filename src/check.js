@@ -1,12 +1,9 @@
-const { version } = require("process");
+import { version } from "process";
 
 const [major] = version.slice(1).split(".");
 
-function isModernNode() {
+export function isModernNode() {
   return Number(major) >= 18;
 }
 
-module.exports = {
-  isModernNode,
-  nodeMajorVersion: Number(major),
-};
+export const nodeMajorVersion = Number(major);

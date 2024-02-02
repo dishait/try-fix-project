@@ -1,25 +1,28 @@
 #!/usr/bin/env node
 
-const fg = require("fast-glob");
-const { log } = require("./log");
-const { join, resolve } = require("path");
-const { isModernNode } = require("./check");
-const { select } = require("@inquirer/prompts");
-const { execSync } = require("child_process");
-const {
-  writeNpmrc,
+import { glob as fg } from "fast-glob";
+import { log } from "./log";
+import { dirname, join, resolve } from "path";
+import { isModernNode } from "./check";
+import { select } from "@inquirer/prompts";
+import { execSync } from "child_process";
+import {
+  defuPackageJson,
+  detectInstallCommand,
+  ensureEmpty,
+  find,
+  mayBeBackupFiles,
   mayBeCleanDir,
   readTextFile,
-  mayBeBackupFiles,
-  defuPackageJson,
-  ensureEmpty,
-  detectInstallCommand,
-  find,
-} = require("./fs");
-const { copyFile, exists, ensureFile } = require("fs-extra");
-const { writeFile } = require("fs/promises");
-const { version } = require("process");
-const { getPackageInfo } = require("local-pkg");
+  writeNpmrc,
+} from "./fs";
+import { copyFile, ensureFile, exists } from "fs-extra";
+import { writeFile } from "fs/promises";
+import { version } from "process";
+import { getPackageInfo } from "local-pkg";
+import { fileURLToPath } from "url";
+
+const _dirname = dirname(fileURLToPath(import.meta.url));
 
 async function run() {
   const isWindows = version.includes("Windows");
@@ -28,7 +31,7 @@ async function run() {
   const originPackageFile = "package.json";
   const originLockFiles = ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"];
 
-  const projectDir = resolve(__dirname, "../projects");
+  const projectDir = resolve(_dirname, "../projects");
   const projects = await fg("*", {
     onlyDirectories: true,
     cwd: projectDir,

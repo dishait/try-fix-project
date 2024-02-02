@@ -1,6 +1,6 @@
-const { isObject } = require("m-type-tools");
-const { nodeMajorVersion } = require("./check");
-const { createDefu } = require("defu");
+import { isObject } from "m-type-tools";
+import { nodeMajorVersion } from "./check";
+import { createDefu } from "defu";
 
 function normalizeNodeSassVersion() {
   switch (nodeMajorVersion) {
@@ -21,7 +21,7 @@ function normalizeNodeSassVersion() {
   }
 }
 
-const defu = createDefu((defaultObject, key, value) => {
+export const defu = createDefu((defaultObject, key, value) => {
   // node-sass 需要自动
   if (isObject(value) && "node-sass" in value) {
     value["node-sass"] = normalizeNodeSassVersion() ?? value["node-sass"];
@@ -35,7 +35,3 @@ const defu = createDefu((defaultObject, key, value) => {
   }
   return false;
 });
-
-module.exports = {
-  defu,
-};

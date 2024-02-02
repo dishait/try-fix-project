@@ -2,18 +2,20 @@
   "version": "0.6.1",
   "name": "try-fix-project",
   "description": "尝试修复课程项目的依赖和版本问题",
+  "type": "module",
   "bin": {
-    "try-fix-project": "src/cli.js"
+    "try-fix-project": "dist/cli.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dishait/try-fix-project.git"
   },
   "files": [
-    "src",
+    "dist",
     "projects"
   ],
   "scripts": {
+    "build": "unbuild",
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [
@@ -35,16 +37,17 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.4.0",
-    "bumpp": "^9.1.1"
+    "@inquirer/prompts": "^3.3.2",
+    "@types/node": "^20.11.16",
+    "bumpp": "^9.3.0",
+    "defu": "^6.1.4",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "local-pkg": "^0.5.0",
+    "m-type-tools": "^0.5.1",
+    "unbuild": "^2.0.0"
   },
   "dependencies": {
-    "@inquirer/prompts": "^2.3.0",
-    "consola": "^3.2.3",
-    "defu": "^6.1.2",
-    "fast-glob": "^3.3.0",
-    "fs-extra": "^11.1.1",
-    "local-pkg": "^0.5.0",
-    "m-type-tools": "^0.4.1"
+    "consola": "^3.2.3"
   }
 }

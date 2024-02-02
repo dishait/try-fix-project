@@ -1,16 +1,17 @@
-const { join } = require("path");
-const { defu } = require("./normalize");
-const {
+import { join } from "path";
+
+import { defu } from "./normalize";
+import {
+  appendFile,
+  copyFile,
   emptyDir,
   ensureDir,
   exists,
   lstat,
-  copyFile,
   readFile,
-  writeFile,
   remove,
-  appendFile,
-} = require("fs-extra");
+  writeFile,
+} from "fs-extra";
 
 async function mayBeCleanDir(dir) {
   if (await exists(dir)) {
@@ -103,18 +104,18 @@ async function find(paths) {
   return null;
 }
 
-module.exports = {
-  find,
-  readJson,
-  writeJson,
-  writeNpmrc,
+export {
+  defuPackageJson,
+  detectInstallCommand,
   ensureEmpty,
   ensureRemove,
-  readTextFile,
-  mayBeCleanDir,
-  defuPackageJson,
+  find,
+  getFileFormatedMtime,
   mayBeBackupFile,
   mayBeBackupFiles,
-  getFileFormatedMtime,
-  detectInstallCommand,
+  mayBeCleanDir,
+  readJson,
+  readTextFile,
+  writeJson,
+  writeNpmrc,
 };

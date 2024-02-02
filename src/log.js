@@ -1,5 +1,3 @@
-const { consola } = require("consola");
+import { consola } from "consola";
 
-const log = consola.withTag("try-fix-project");
-
-module.exports = { log };
+export const log = consola.withTag("try-fix-project");
