@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "unbuild",
+    "prepublishOnly": "pnpm run build",
     "release": "bumpp --commit --push --tag && npm publish"
   },
   "keywords": [
