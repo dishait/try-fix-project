@@ -37,7 +37,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@inquirer/prompts": "^3.3.2",
     "@types/node": "^20.11.16",
     "bumpp": "^9.3.0",
     "defu": "^6.1.4",

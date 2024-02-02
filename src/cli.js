@@ -4,7 +4,6 @@ import { glob as fg } from "fast-glob";
 import { log } from "./log";
 import { dirname, join, resolve } from "path";
 import { isModernNode } from "./check";
-import { select } from "@inquirer/prompts";
 import { execSync } from "child_process";
 import {
   defuPackageJson,
@@ -36,11 +35,11 @@ async function run() {
     onlyDirectories: true,
     cwd: projectDir,
   });
-  const choices = projects.map((p) => ({ name: p, value: p }));
+  const choices = projects.map((p) => ({ label: p, value: p }));
 
-  const answer = await select({
-    message: "选择你当前的课程名称?",
-    choices,
+  const answer = await log.prompt("选择你当前的课程名称?", {
+    type: "select",
+    options: choices,
   });
 
   await writeNpmrc("registry=https://registry.npmmirror.com/");
