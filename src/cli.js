@@ -15,7 +15,7 @@ import {
   readTextFile,
   writeNpmrc,
 } from "./fs";
-import { copyFile, ensureFile, exists } from "fs-extra";
+import { copyFile, ensureFile, exists, outputFile } from "fs-extra";
 import { writeFile } from "fs/promises";
 import { version } from "process";
 import { getPackageInfo } from "local-pkg";
@@ -131,6 +131,15 @@ async function run() {
       await writeFile("plugins/naive-ui.js", futurePluginText);
     }
     return;
+  }
+
+  if (answer === "vue3+ts 实战打造企业UI组件库") {
+    const settings = ".vscode/settings.json";
+
+    await outputFile(
+      settings,
+      await readTextFile(join(projectDir, settings)),
+    );
   }
 
   await mayBeCleanDir("node_modules");

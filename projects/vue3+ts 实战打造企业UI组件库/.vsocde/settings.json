@@ -1,0 +1,44 @@
+{
+  // 开启扁平化配置
+  "eslint.experimental.useFlatConfig": true,
+
+  // 关闭默认的配置，我们这里默认不开启prettier格式化
+  "prettier.enable": false,
+  // 关闭默认格式化
+  "editor.formatOnSave": false,
+
+  // 保存自动修复
+  "editor.codeActionsOnSave": {
+    // 我们这里是指定自定义的修复
+    "source.fixAll": "explicit",
+    // 来源导入我们不需要给关闭掉
+    "source.organizeImports": "never"
+  },
+
+  // 静默样式规则自动修复
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "off" },
+    { "rule": "*-indent", "severity": "off" },
+    { "rule": "*-spacing", "severity": "off" },
+    { "rule": "*-spaces", "severity": "off" },
+    { "rule": "*-order", "severity": "off" },
+    { "rule": "*-dangle", "severity": "off" },
+    { "rule": "*-newline", "severity": "off" },
+    { "rule": "*quotes", "severity": "off" },
+    { "rule": "*semi", "severity": "off" }
+  ],
+
+  // 在eslin中开启哪些语言的校验
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml"
+  ]
+}
