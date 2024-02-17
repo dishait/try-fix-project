@@ -18,9 +18,10 @@ npx try-fix-project
 
 目前支持以下课程项目
 
-- [VueCli 实战商城后台管理系统](https://study.163.com/course/introduction.htm?courseId=1209431911&_trace_c_p_k2_=ddccb8c159164e96956d7e26de68334e)
-- [vue-element在线教育后台系统](https://study.163.com/course/introduction.htm?courseId=1210894808&_trace_c_p_k2_=534a09d82b0647f4b1bfa6c4f299c7b7)
-- [Nuxt3+Vue3实战在线教育网站](https://study.163.com/course/introduction.htm?courseId=1212899803&_trace_c_p_k2_=b5ed95c463a74362ba27e4cdc806d7ee)
+- [VueCli 实战商城后台管理系统](https://pc.dishait.cn/p/t_pc/goods_pc_detail/goods_detail/course_2XCmKpOFqilU8w3zCVM37dBNR8g)
+- [vue-element在线教育后台系统](https://pc.dishait.cn/p/t_pc/goods_pc_detail/goods_detail/course_2XCmWS8wHNC7j3us9Nltg2DorBX)
+- [Nuxt3+Vue3实战在线教育网站](https://pc.dishait.cn/p/t_pc/goods_pc_detail/goods_detail/course_2XCgEdbHmGaMTaVmHDmOsc1hWdC)
+- [vue3+ts实战打造企业UI组件库](https://pc.dishait.cn/p/t_pc/goods_pc_detail/goods_detail/course_2bkgRIF8Rwr8DWFaDEqgaz79lJP)
 
 <br />
 
