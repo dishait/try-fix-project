@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "try-fix-project",
   "description": "尝试修复课程项目的依赖和版本问题",
   "type": "module",
