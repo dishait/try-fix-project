@@ -12,7 +12,9 @@ import {
   find,
   mayBeBackupFiles,
   mayBeCleanDir,
+  readJson,
   readTextFile,
+  writeJson,
   writeNpmrc,
 } from "./fs";
 import { copyFile, ensureFile, exists, outputFile } from "fs-extra";
@@ -113,11 +115,11 @@ async function run() {
 
     if (packageInfo.version.includes("3.0.0")) {
       futurePluginText = await readTextFile(
-        join(projectDir, "plugins/old-naive-ui.js"),
+        join(projectDir, answer, "plugins/old-naive-ui.js"),
       );
     } else {
       futurePluginText = await readTextFile(
-        join(projectDir, "plugins/naive-ui.js"),
+        join(projectDir, answer, "plugins/naive-ui.js"),
       );
     }
     const pluginFile = await find([
@@ -133,13 +135,24 @@ async function run() {
     return;
   }
 
-  if (answer === "vue3+ts 实战打造企业UI组件库") {
+  if (answer === "vue3+ts实战打造企业UI组件库") {
     const settings = ".vscode/settings.json";
 
     await outputFile(
       settings,
-      await readTextFile(join(projectDir, settings)),
+      await readTextFile(join(projectDir, answer, settings)),
     );
+    const originPackageJson = await readJson(originPackageFile);
+    // 固定 husky 版本为 8.0.3
+    if (originPackageJson.devDependencies["husky"]) {
+      originPackageJson.devDependencies["husky"] = "8.0.3";
+    } else {
+      originPackageJson.dependencies["husky"] = "8.0.3";
+    }
+    await writeJson(originPackageFile, originPackageJson);
+    await install();
+    log.success("fix 成功");
+    return;
   }
 
   await mayBeCleanDir("node_modules");
@@ -170,6 +183,14 @@ async function run() {
 
   log.info("合并 package.json");
 
+  await install();
+
+  log.success("fix 成功");
+}
+
+run();
+
+async function install() {
   const install = await detectInstallCommand();
 
   log.info(`尝试重新执行 ${install}`);
@@ -177,8 +198,4 @@ async function run() {
   execSync(install, {
     stdio: "inherit",
   });
-
-  log.success("fix 成功");
 }
-
-run();
