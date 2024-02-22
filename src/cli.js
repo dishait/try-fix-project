@@ -136,12 +136,20 @@ async function run() {
   }
 
   if (answer === "vue3+ts实战打造企业UI组件库") {
+    const currentProjectDir = join(projectDir, answer);
+    const preCommit = ".husky/pre-commit";
     const settings = ".vscode/settings.json";
 
     await outputFile(
       settings,
-      await readTextFile(join(projectDir, answer, settings)),
+      await readTextFile(join(currentProjectDir, settings)),
     );
+
+    await outputFile(
+      preCommit,
+      await readTextFile(join(currentProjectDir, preCommit)),
+    );
+
     const originPackageJson = await readJson(originPackageFile);
     // 固定 husky 版本为 8.0.3
     if (originPackageJson.devDependencies["husky"]) {
@@ -149,6 +157,8 @@ async function run() {
     } else {
       originPackageJson.dependencies["husky"] = "8.0.3";
     }
+    originPackageJson.scripts["prepare"] = "husky install";
+
     await writeJson(originPackageFile, originPackageJson);
     await install();
     log.success("fix 成功");
