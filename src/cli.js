@@ -98,6 +98,12 @@ async function run() {
   }
 
   if (answer === "Nuxt3+Vue3实战在线教育网站") {
+    let packageInfo = await getPackageInfo("nuxt");
+    if (packageInfo === undefined) {
+      log.warn("未发现 nuxt 依赖，安装中...");
+      await install();
+      packageInfo = await getPackageInfo("nuxt");
+    }
     const isOld = packageInfo.version.includes("3.0.0");
     await mayBeCleanDir(".nuxt");
     log.info("已确保清理 .nuxt 缓存");
@@ -118,7 +124,6 @@ async function run() {
 
     // 判断 nuxt 版本，修复 naive ui 样式问题
     let futurePluginText = "";
-    const packageInfo = await getPackageInfo("nuxt");
 
     if (isOld) {
       futurePluginText = await readTextFile(
