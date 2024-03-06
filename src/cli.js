@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { loadFile } from "magicast";
-import { writeFile } from "fs/promises";
 import { glob as fg } from "fast-glob";
 import { log } from "./log";
 import { dirname, join, resolve } from "path";
