@@ -96,8 +96,7 @@ async function detectInstallCommand() {
 
 async function find(paths) {
   for (const path of paths) {
-    if (await exists(path));
-    {
+    if (await exists(path)) {
       return path;
     }
   }
