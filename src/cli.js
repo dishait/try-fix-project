@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { loadFile } from "magicast";
+import { writeFile } from "fs/promises";
 import { glob as fg } from "fast-glob";
 import { log } from "./log";
 import { dirname, join, resolve } from "path";
@@ -97,6 +99,7 @@ async function run() {
   }
 
   if (answer === "Nuxt3+Vue3实战在线教育网站") {
+    const isOld = packageInfo.version.includes("3.0.0");
     await mayBeCleanDir(".nuxt");
     log.info("已确保清理 .nuxt 缓存");
 
@@ -107,13 +110,18 @@ async function run() {
 
     await writeFile("nuxt.config.ts", newNuxtConfigText);
 
+    if (!isOld) {
+      await fixWindicss();
+      log.success("修复 windicss 配置成功");
+    }
+
     log.info("已重写 nuxt.config.ts 配置文件");
 
     // 判断 nuxt 版本，修复 naive ui 样式问题
     let futurePluginText = "";
     const packageInfo = await getPackageInfo("nuxt");
 
-    if (packageInfo.version.includes("3.0.0")) {
+    if (isOld) {
       futurePluginText = await readTextFile(
         join(projectDir, answer, "plugins/old-naive-ui.js"),
       );
@@ -208,4 +216,22 @@ async function install() {
   execSync(install, {
     stdio: "inherit",
   });
+}
+
+async function fixWindicss() {
+  const mod = await loadFile("nuxt.config.ts");
+  const options = mod.exports.default.$type === "function-call"
+    ? mod.exports.default.$args[0]
+    : mod.exports.default;
+
+  if (!options.css || !options.css.includes("virtual:windi-base.css")) {
+    options.css ??= [];
+    options.css = [
+      "virtual:windi-base.css",
+      ...options.css,
+      "virtual:windi-components.css",
+      "virtual:windi-utilities.css",
+    ];
+    await writeFile("nuxt.config.ts", mod.generate().code);
+  }
 }
