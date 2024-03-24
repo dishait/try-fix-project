@@ -25,6 +25,10 @@ export const defu = createDefu((defaultObject, key, value) => {
   // node-sass 需要自动
   if (isObject(value) && "node-sass" in value) {
     value["node-sass"] = normalizeNodeSassVersion() ?? value["node-sass"];
+    if (nodeMajorVersion >= 20) {
+      delete value["node-sass"];
+      value["sass"] = "1.72.0";
+    }
     return false;
   }
 
