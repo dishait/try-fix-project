@@ -1,3 +1,5 @@
+// @ts-nocheck
+// naive-ui 必备的插件，不需要修改它
 import { setup } from "@css-render/vue3-ssr";
 import { defineNuxtPlugin } from "#app";
 
