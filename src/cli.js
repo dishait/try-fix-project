@@ -78,9 +78,7 @@ async function run() {
   if (answer === "vue-element在线教育后台系统") {
     log.info("重写 git url 配置");
     try {
-      execSync(
-        `git config --global url."https://".insteadOf ssh://git@`,
-      );
+      execSync(`git config --global url."https://".insteadOf ssh://git@`);
     } catch (error) {
       log.error(error);
       log.warn(`重写 git url 配置失败，依赖安装可能将失败`);
@@ -110,14 +108,20 @@ async function run() {
 
     const nuxtConfigText = await readTextFile("nuxt.config.ts");
 
-    const newNuxtConfigText = nuxtConfigText.replace("autoImports", "imports")
-      .replace("buildModules", "modules").replace(/import.*nuxt['"]/, "");
+    const newNuxtConfigText = nuxtConfigText
+      .replace("autoImports", "imports")
+      .replace("buildModules", "modules")
+      .replace(/import.*nuxt['"]/, "");
 
     await writeFile("nuxt.config.ts", newNuxtConfigText);
 
     if (!isOld) {
       await fixWindicss();
       log.success("修复 windicss 配置成功");
+
+      await fixDateFnsTz();
+
+      log.success("修复 date-fns-tz 成功");
     }
 
     log.info("已重写 nuxt.config.ts 配置文件");
@@ -181,10 +185,7 @@ async function run() {
 
   log.info("清理 node_modules");
 
-  await mayBeBackupFiles([
-    originPackageFile,
-    ...originLockFiles,
-  ]);
+  await mayBeBackupFiles([originPackageFile, ...originLockFiles]);
 
   log.info("备份 package.json 和 lock 文件");
 
@@ -198,10 +199,7 @@ async function run() {
     isModernNode() ? "package.json" : "old-package.json",
   );
 
-  await defuPackageJson(
-    targetPackageFile,
-    originPackageFile,
-  );
+  await defuPackageJson(targetPackageFile, originPackageFile);
 
   log.info("合并 package.json");
 
@@ -231,11 +229,27 @@ async function fixWindicss() {
   if (!options.css || !options.css.includes("virtual:windi-base.css")) {
     options.css ??= [];
     options.css = [
-      "virtual:windi-base.css",
-      ...options.css,
-      "virtual:windi-components.css",
-      "virtual:windi-utilities.css",
+      ...new Set([
+        [
+          "virtual:windi-base.css",
+          ...options.css,
+          "virtual:windi-components.css",
+          "virtual:windi-utilities.css",
+        ],
+      ]),
     ];
     await writeFile("nuxt.config.ts", mod.generate().code);
   }
+}
+
+async function fixDateFnsTz() {
+  const mod = await readTextFile("nuxt.config.ts");
+
+  await writeFile(
+    "nuxt.config.ts",
+    mod.replace(
+      "date-fns-tz/esm/formatInTimeZone",
+      "date-fns-tz/formatInTimeZone",
+    ),
+  );
 }
