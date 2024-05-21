@@ -18,11 +18,13 @@ import {
   writeJson,
   writeNpmrc,
 } from "./fs";
-import { copyFile, ensureFile, exists, outputFile } from "fs-extra";
+import { copyFile, ensureFile, exists, outputFile, remove } from "fs-extra";
 import { writeFile } from "fs/promises";
 import { version } from "process";
 import { getPackageInfo } from "local-pkg";
 import { fileURLToPath } from "url";
+
+import semver from "semver";
 
 const _dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -125,29 +127,33 @@ async function run() {
     }
 
     log.info("已重写 nuxt.config.ts 配置文件");
-
-    // 判断 nuxt 版本，修复 naive ui 样式问题
-    let futurePluginText = "";
-
-    if (isOld) {
-      futurePluginText = await readTextFile(
-        join(projectDir, answer, "plugins/old-naive-ui.js"),
-      );
-    } else {
-      futurePluginText = await readTextFile(
-        join(projectDir, answer, "plugins/naive-ui.js"),
-      );
-    }
     const pluginFile = await find([
       "plugins/naive-ui.js",
       "plugins/naive-ui.ts",
     ]);
 
-    if (pluginFile) {
-      await writeFile(pluginFile, futurePluginText);
-    } else {
-      await writeFile("plugins/naive-ui.js", futurePluginText);
+    const shouldUseModule = semver.gte(packageInfo.version, "3.10.0");
+    // 判断 nuxt 版本，修复 naive ui 样式问题
+    if (!shouldUseModule) {
+      const futurePluginText = await readTextFile(
+        join(
+          projectDir,
+          answer,
+          isOld ? "plugins/old-naive-ui.js" : "plugins/naive-ui.js",
+        ),
+      );
+
+      await writeFile(pluginFile || "plugins/naive-ui.js", futurePluginText);
+      log.success("修复 nuxt 样式成功");
+      return;
     }
+
+    if (pluginFile) {
+      await remove(pluginFile);
+    }
+
+    await setupNaiveUiModule();
+
     return;
   }
 
@@ -252,4 +258,39 @@ async function fixDateFnsTz() {
       "date-fns-tz/formatInTimeZone",
     ),
   );
+}
+
+async function setupNaiveUiModule() {
+  const mod = await loadFile("nuxt.config.ts");
+  log.info("nuxt 版本大于 3.10.0，使用 @bg-dev/nuxt-naiveui");
+
+  const options = mod.exports.default.$type === "function-call"
+    ? mod.exports.default.$args[0]
+    : mod.exports.default;
+
+  if (!options.modules) {
+    options.modules = ["@bg-dev/nuxt-naiveui"];
+  }
+
+  options.modules.push("@bg-dev/nuxt-naiveui");
+
+  options.modules = [...new set(options.modules)];
+
+  // if (options.build && options.build.transpile) {
+  //   options.build = undefined;
+  // }
+
+  await writeFile("nuxt.config.ts", mod.generate().code);
+
+  const install = await detectInstallCommand() + " @bg-dev/nuxt-naiveui";
+
+  const installCommand = install.includes("yarn")
+    ? `yarn add @bg-dev/nuxt-naiveui`
+    : `${install} @bg-dev/nuxt-naiveui`;
+
+  log.info(`尝试安装 @bg-dev/nuxt-naiveui → ${installCommand}`);
+
+  execSync(install, {
+    stdio: "inherit",
+  });
 }
