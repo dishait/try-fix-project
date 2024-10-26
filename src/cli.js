@@ -25,6 +25,7 @@ import { getPackageInfo } from "local-pkg";
 import { fileURLToPath } from "url";
 
 import semver from "semver";
+import { transformOptions } from "./transform";
 
 const _dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -46,6 +47,13 @@ async function run() {
     type: "select",
     options: choices,
   });
+
+  if (answer === "uniappx社区交友") {
+    log.info("转换 options");
+    await transformOptions();
+    log.success("转换 options 成功");
+    return;
+  }
 
   await writeNpmrc("registry=https://registry.npmmirror.com/");
 
