@@ -20,9 +20,9 @@ export async function transformOptions() {
         const code = await readFile(file, "utf-8");
 
         const newCode = code.replace("OnLoadOptions", "UTSJSONObject")
-            .replaceAll(
-                "options.get",
-                "options.getString",
+            .replace(
+                /options.get\((.*?)\)/g,
+                "options.getString($1)",
             ).replace(
                 /options.has\((.*?)\)/g,
                 "options.getString($1) != ''",
